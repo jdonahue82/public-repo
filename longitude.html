@@ -1,0 +1,66 @@
+<html>
+	<head>
+		<title>Longitude Normalization - Joe Donahue</title>		
+		<script src="//code.jquery.com/jquery-2.1.1.js"></script>
+		<script type="text/javascript">
+			$(function() {
+			
+				/* Declare */
+				var form = document.forms.myform,
+				    elem = form.elements;
+				var submit = $("#trigger");
+				var longitude = elem.longitude;
+				
+				/* Event Handler */			
+				submit.click(process_request);
+				
+			});
+			
+			/* Main Process */
+			function process_request() {
+			    var normalized_longitude = normalize_longitude(longitude.value);    
+			    var output = $("#output-list");
+			    output.append("<li>" +new Date() +" " + longitude.value + " " + normalized_longitude +" </li>");
+			    return false; 
+			}
+			/* Let's do some Math.
+			 *
+			 * 190 -> -170
+			 * -210 -> 150
+			 * 720 -> 0
+			 * -750 -> -30
+			 * -890 -> -170
+			 * 920 -> -160
+			*/
+			function normalize_longitude(n) {    
+			    var result,
+			        mod = n%360;        
+			    
+			    if (Math.abs(mod) <= 180)
+			        result = mod;
+			    else {
+			        result = 360-Math.abs(mod);
+			        result = (n > 0) ? 0 - result : result;
+			    }    
+			    
+			    return result;
+			}			
+		</script>	
+		<style>
+			#output-window {border:solid 1px black; background-color: #e9e9e9;  margin:40px;}
+			#output-list {list-style-type:none;}			
+		</style>
+	</head>
+	<body>		
+
+		<form name="myform" method="post">
+		    <input type="number" id="longitude" name="longitude"  required="required"/>
+		    <input id="trigger" type="submit" value="submit" />
+		</form>
+		<div id="output-window">
+		<ul id="output-list">
+		</ul>   
+		</div>
+
+	</body>
+</html>
